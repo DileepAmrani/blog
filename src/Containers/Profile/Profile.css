@@ -1,0 +1,13 @@
+.creat-post-heading {
+    /* color: #4957aa; */
+}
+
+.heading{
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00867d;
+}
+input{
+ border: none;
+}
