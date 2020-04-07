@@ -9,7 +9,7 @@ class Footer extends React.Component {
         <footer className="footer-distributed">
           <div className="footer-left">
             <h3>
-            <img src={Logo} width='100px'/>
+            <img src={Logo} width='100px' alt='Logo'/>
             </h3>
 
             <p className="footer-links">
@@ -17,13 +17,13 @@ class Footer extends React.Component {
                 Home
               </a>
 
-              <a href="#">Blog</a>
+              <a href="/">Blog</a>
 
-              <a href="#">About</a>
+              <a href="/">About</a>
 
-              <a href="#">Faq</a>
+              <a href="/">Faq</a>
 
-              <a href="#">Contact</a>
+              <a href="/">Contact</a>
             </p>
 
             <p className="footer-company-name">Company Name © 2015</p>
@@ -58,13 +58,13 @@ class Footer extends React.Component {
             </p>
 
             <div className="footer-icons">
-              <a href="#">
+              <a href="/">
                 <TiSocialFacebookCircular  size={35} />
               </a>
-              <a href="#">
+              <a href="/">
                 <TiSocialTwitter  size={35} />
               </a>
-              <a href="#">
+              <a href="/">
                 <TiSocialLinkedinCircular  size={35} />
               </a>
          

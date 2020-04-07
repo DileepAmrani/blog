@@ -42,25 +42,31 @@ class Home extends React.Component {
         // An error happened.
       });
   };
+  
 
+
+ 
   componentDidMount() {
     let { posts } = this.state;
     firebaseApp
       .firestore()
-      .collection("posts").orderBy('timestamp', 'desc').limit(10)
-      .get()
-      .then((snapshot) => {
+      .collection("posts")
+      .orderBy("timestamp", 'desc')
+      .onSnapshot((snapshot) => {
+        let changes = snapshot.docChanges();
+        console.log(changes);
         snapshot.forEach((doc) => {
-          let getposts = doc.data();
-          posts.push(getposts);
-          console.log(getposts);
-          this.setState({
-            posts: posts,
-            loader: true,
-          });
-        });
-      });
+  
+        console.log(doc.data());
 
+          posts.push(doc.data());
+          this.setState({
+              posts: posts,
+              loader: true,
+            });
+          })
+      });
+    
     setTimeout(() => {
       this.setState({
         loader: true,
@@ -81,6 +87,44 @@ class Home extends React.Component {
       }
     });
   }
+  // componentDidMount() {
+  //   let { posts } = this.state;
+  //   firebaseApp
+  //     .firestore()
+  //     .collection("posts").orderBy('timestamp', 'desc').limit(10)
+  //     .get()
+  //     .then((snapshot) => {
+  //       snapshot.forEach((doc) => {
+  //         let getposts = doc.data();
+  //         posts.push(getposts);
+  //         console.log(getposts);
+  //         this.setState({
+  //           posts: posts,
+  //           loader: true,
+  //         });
+  //       });
+  //     });
+
+  //   setTimeout(() => {
+  //     this.setState({
+  //       loader: true,
+  //     });
+  //   }, 4000);
+
+  //   firebaseApp.auth().onAuthStateChanged((user) => {
+  //     if (user) {
+  //       // User is signed in.
+  //       console.log("user =>>>>", user.uid);
+  //       this.setState({
+  //         authoruid: user.uid,
+  //         loginValue: true,
+  //       });
+  //     } else {
+  //       // User is signed out.
+  //       // ...
+  //     }
+  //   });
+  // }
 
   render() {
     console.log(this.state);
@@ -102,7 +146,7 @@ class Home extends React.Component {
           {this.state.loader ? (
             <div>
               {this.state.posts === undefined ||
-              this.state.posts.length == 0 ? (
+              this.state.posts.length === 0 ? (
                 <div
                   style={{
                     textAlign: "center",
@@ -110,7 +154,7 @@ class Home extends React.Component {
                     fontSize: "300%",
                   }}
                 >
-                  Data is Not Available
+                  Data is Loading or May Be Not Available
                 </div>
               ) : (
                 <div>
@@ -121,23 +165,24 @@ class Home extends React.Component {
                           <Grid item lg={12} sm={12}>
                             <Paper elevation={0} className="paper" key={i}>
                               <Grid container>
-
-
-
                                 <Grid item lg={12} sm={12}>
                                   <FaUserTag size={20} />
                                   <span className="author">{v.author}</span>
                                 </Grid>
-                                  <br />
+                                <br />
 
-                                <Grid item lg={6} sm={6} md={6}>
+                                <Grid item lg={12} sm={12} md={12}>
                                   <MdTextFields size={35} />
                                   <span className="title">{v.title}</span>
-                                  <br />
                                 </Grid>
-                                <Grid item lg={12} sm={12} xs={12} >
-                                  <div style={{textAlign: 'center'}}>
-                                <img src={v.img} className='post-image'/>
+                                <br />
+                                <Grid item lg={12} sm={12} xs={12}>
+                                  <div style={{ textAlign: "center" }}>
+                                    <img
+                                      src={v.postImageURL}
+                                      className="post-image"
+                                      alt={v.title}
+                                    />
                                   </div>
                                 </Grid>
                                 <Grid item xs={12}>

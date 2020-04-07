@@ -3,14 +3,11 @@ import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
 import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import { FaBlogger } from "react-icons/fa";
 import { AiOutlineLogout } from "react-icons/ai";
 import { FaUserAlt } from "react-icons/fa";
 import { IoMdLogIn, IoIosHome } from "react-icons/io";
@@ -118,7 +115,7 @@ export default function PrimarySearchAppBar(props) {
     >
       { props.loginValue ? 
         <div>
-          <MenuItem onClick={handleMenuClose,  ()=> props.path1()}>
+          <MenuItem onClick={handleMenuClose, ()=> props.path1()}>
             <FaUserAlt />
             &nbsp; Profile
           </MenuItem>
@@ -195,7 +192,7 @@ export default function PrimarySearchAppBar(props) {
           >
                     </IconButton>
           {/* <Typography className={classes.titl} variant="h6" noWrap> */}
-            <img src={require('./../../Images/quill.png')} width="50px" />
+            <img src={require('./../../Images/quill.png')} width="50px" alt="Logo"/>
           {/* </Typography> */}
           {/* <div className={classes.search}>
             <div className={classes.searchIcon}>

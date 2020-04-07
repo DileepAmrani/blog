@@ -32,7 +32,9 @@ class Profile extends React.Component {
       login: false,
       posts: [],
       loader: false,
-      createdOn: date
+      createdOn: date,
+      img: "",
+      fileName: ''
     };
   }
 
@@ -67,16 +69,25 @@ class Profile extends React.Component {
           });
         });
       });
-
     firebaseApp
       .firestore()
       .collection("posts")
       .where("authoruid", "==", uid)
-      .get()
-      .then((value) => {
-        value.forEach((doc) => {
+      .orderBy("timestamp", "desc")
+      .onSnapshot((snapshot) => {
+        snapshot.forEach((doc) => {
           let getposts = doc.data();
           getposts.id = doc.id;
+          let changes = snapshot.docChanges();
+          console.log(changes);
+          console.log(doc.data());
+          if (changes.type === "added") {
+            console.log(changes.doc.data());
+          }
+          if (changes.type === "modified") {
+            console.log(changes.doc.data());
+          }
+          console.log(getposts);
           posts.push(getposts);
           this.setState({
             posts: posts,
@@ -90,6 +101,7 @@ class Profile extends React.Component {
       });
     }, 4000);
   }
+
   signout = () => {
     firebaseApp
       .auth()
@@ -134,12 +146,24 @@ class Profile extends React.Component {
             "success"
           );
           let { posts } = this.state;
+
+          let desertRef = firebaseApp.storage().ref(`images/${v.fileName}`);
+
+          // Delete the file
+          desertRef.delete().then( ()=> {
+            // File deleted successfully
+            console.log('Deleted')
+          }).catch( (error)=> {
+            // Uh-oh, an error occurred!
+            console.log('Not Deleted')
+          });
+
           firebaseApp
             .firestore()
             .collection("posts")
             .doc(v.id)
             .delete()
-            .then(posts.splice(i, 1))
+            .then(posts.splice(i, 1));
           this.setState({
             posts: posts,
           });
@@ -156,78 +180,90 @@ class Profile extends React.Component {
       });
   };
 
-  imageUpload = e => {
-    let fileName = e.target.files[0];
+  imageUpload = (e) => {
+    let fileName = e.target.files[0].name;
     this.setState({
-      fileName: fileName
+      fileName: fileName,
     });
+    let ref = firebaseApp.storage().ref("/").child(`images/${fileName}`);
 
-  };
+    let imagePut = ref.put(e.target.files[0]);
 
-  post = () => {
-
-    let { title, description, timestamp, author, authoruid, createdOn, postImage, fileName } = this.state;
-    
-    let ref = firebaseApp
-    .storage()
-    .ref("/")
-    .child(`images/${fileName}`);
-    
-    let imagePut = ref.put(fileName);
-    
-    imagePut.on("state_changed", () => {
-      ref
-      .getDownloadURL()
-      .then(url => {
-        console.log(url);
-        this.setState({
-                postImage: url
+        imagePut.on("state_changed", () => {
+          ref
+            .getDownloadURL()
+            .then((url) => {
+              console.log(url);
+              this.setState({
+                postImage: url,
               });
             })
-            .catch(err => {
+            .catch((err) => {
               console.log(err);
             });
         });
-        
-//         if(title){
-//           if(description){
-//         firebaseApp
-//         .firestore()
-//         .collection("posts")
-//         .add({
-//           title: title,
-//           description: description,
-//           timestamp: timestamp,
-//           author: author,
-//           authoruid: authoruid,
-//           createdOn: createdOn,
-//           postImageURL:postImage
-//         })
-//         .then( (res)=> {
-//           this.props.history.push("/profile");
-//           this.setState({
-//             title: " ",
-//             description: " ",
-//           });
-//           console.log("Document successfully written!", res);
-//           Swal.fire("Post Created Successfully", "You may Processed", "success");
-          
-//         })
-//         .catch( (error)=> {
-//           console.error("Error writing document: ", error);
-//           Swal.fire("Data not sent Succesfuly", "You may Processed", "error");
-//         });
-//       }
-//       else{
-//       Swal.fire("Description is Missing", "Please Write Description", "error");
-//     }
-//   }
-//   else {
-//     Swal.fire("Title is Missing", "Please Give Title to Post", "error");
-// }
-                 
-      
-      
+  };
+
+
+
+
+
+  post = () => {
+    let {
+      title,
+      description,
+      timestamp,
+      author,
+      authoruid,
+      createdOn,
+      postImage,
+      fileName
+    } = this.state;
+
+
+
+    if (title) {
+      if (description) {
+        firebaseApp
+          .firestore()
+          .collection("posts")
+          .add({
+            title: title,
+            description: description,
+            timestamp: timestamp,
+            author: author,
+            authoruid: authoruid,
+            createdOn: createdOn,
+            postImageURL: postImage,
+            fileName, fileName
+          })
+          .then((res) => {
+            this.props.history.push("/profile");
+            this.setState({
+              title: " ",
+              description: " ",
+            });
+            console.log("Document successfully written!", res);
+            Swal.fire(
+              "Post Created Successfully",
+              "You may Processed",
+              "success"
+            );
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+            Swal.fire("Data not sent Succesfuly", "You may Processed", "error");
+          });
+      } else {
+        Swal.fire(
+          "Description is Missing",
+          "Please Write Description",
+          "error"
+        );
+      }
+    } else {
+      Swal.fire("Title is Missing", "Please Give Title to Post", "error");
+    }
   };
   render() {
     console.log(this.state.fileName);
@@ -253,8 +289,13 @@ class Profile extends React.Component {
               <span className="creat-post-heading">Create a New Post ....</span>
               <br />
               <label className="file">
-                <input type="file" id="file" aria-label="File browser example" onChange={e => this.imageUpload(e)} />
-                  <span className="file-custom"></span>
+                <input
+                  type="file"
+                  id="file"
+                  aria-label="File browser example"
+                  onChange={(e) => this.imageUpload(e)}
+                />
+                <span className="file-custom"></span>
               </label>
 
               <TextField
@@ -295,7 +336,7 @@ class Profile extends React.Component {
           {this.state.loader ? (
             <div>
               {this.state.posts === undefined ||
-              this.state.posts.length == 0 ? (
+              this.state.posts.length === 0 ? (
                 <div
                   style={{
                     textAlign: "center",
@@ -310,10 +351,10 @@ class Profile extends React.Component {
                   {this.state.posts.map((v, i) => {
                     return (
                       <Grid container justify-content center>
-                        <Grid item lg={12} sm={12} >
+                        <Grid item lg={12} sm={12}>
                           <Paper elevation={0} className="paper" key={i}>
                             <Grid container>
-                              <Grid item lg={12} sm={12} >
+                              <Grid item lg={12} sm={12}>
                                 <FaUserTag size={20} />
                                 <span className="author">{v.author}</span>
                               </Grid>
@@ -321,6 +362,13 @@ class Profile extends React.Component {
                               <Grid item lg={12} sm={12} xs={12}>
                                 <MdTextFields size={35} />
                                 <span className="title">{v.title}</span>
+                              </Grid>
+
+                              <Grid item lg={12} sm={12} xs={12}>
+                                <div style={{ textAlign: "center" }}>
+                                      
+                                  <img src={v.postImageURL} className="post-image" alt={v.title}/>
+                                </div>
                               </Grid>
                               <Grid item xs={12}>
                                 <p>{v.description}</p>

@@ -94,7 +94,7 @@ export default class SignUp extends React.Component {
   };
 
   render() {
-    const Swal = require("sweetalert2");
+    // const Swal = require("sweetalert2");
     console.log(this.state);
     return (
       <React.Fragment>

@@ -24,7 +24,13 @@ class EditPost extends React.Component {
     });
   }
   updatePost = () => {
-    const { title, description, authoruid, postId, author, timestamp, createdOn } = this.state;
+    const {
+      title,
+      description,
+      // authoruid,
+      postId,
+ 
+    } = this.state;
     // if(postData){
 
     const updateRef = firebaseApp
@@ -32,26 +38,20 @@ class EditPost extends React.Component {
       .collection("posts")
       .doc(postId);
     updateRef
-      .set({
+      .update({
         title,
         description,
-        authoruid,
-        timestamp,
-        author,
-        createdOn
+     
       })
-      .then(docRef => {
+      .then((docRef) => {
         this.setState({
-          postId: "",
           title: "",
           description: "",
-          author: "",
-          createdOn: "",
-          authoruid
+     
         });
-          this.props.history.push("/profile")
+        this.props.history.push("/profile");
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error adding document: ", error);
       });
     // }

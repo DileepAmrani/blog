@@ -13,8 +13,6 @@ import Container from "@material-ui/core/Container";
 import { Navbar } from "../../Components";
 import Swal from "sweetalert2";
 import "./Login.css"
-import {useAlert, transitions, positions, Provider as AlertProvider } from "react-alert";
-import AlertTemplate from "react-alert-template-basic";
 
 function Copyright() {
   return (
@@ -28,14 +26,7 @@ function Copyright() {
     </Typography>
   );
 }
-const options = {
-  // you can also just use 'bottom center'
-  position: positions.BOTTOM_CENTER,
-  timeout: 5000,
-  offset: "30px",
-  // you can also just use 'scale'
-  transition: transitions.SCALE
-};
+
 export default class SignIn extends React.Component{
   constructor(){
     super()
@@ -89,9 +80,9 @@ export default class SignIn extends React.Component{
     }
     render(){
       console.log(this.state)
-      const Swal = require("sweetalert2");
+      // const Swal = require("sweetalert2");
       return (
-        <div template={AlertTemplate} {...options}>
+        <div >
           <Navbar 
             path={() => this.props.history.push("/login")}
             path1={() => this.props.history.push("/profile")}
