@@ -88,7 +88,7 @@ export default class SignUp extends React.Component {
           Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: { errorMessage }
+            text:  errorMessage 
           });
       });
   };

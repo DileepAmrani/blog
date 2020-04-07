@@ -293,6 +293,7 @@ class Profile extends React.Component {
                   type="file"
                   id="file"
                   aria-label="File browser example"
+                  value={this.state.fileName}
                   onChange={(e) => this.imageUpload(e)}
                 />
                 <span className="file-custom"></span>
@@ -304,6 +305,7 @@ class Profile extends React.Component {
                 multiline
                 fullWidth
                 style={{ color: "#fff !important" }}
+                value={this.state.title}
                 onChange={(e) =>
                   this.setState({
                     title: e.target.value,
@@ -312,6 +314,7 @@ class Profile extends React.Component {
               />
               <br />
               <textarea
+                value={this.state.description}
                 onChange={(e) =>
                   this.setState({
                     description: e.target.value,

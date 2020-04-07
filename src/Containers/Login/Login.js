@@ -65,19 +65,16 @@ export default class SignIn extends React.Component{
       
     })
     .catch((error)=> {
-      // const alert = useAlert()
-      // Handle Errors here.
-      // var errorCode = error.code;
-      // var errorMessage = error.message;
-      //   Swal.fire({
-        //     icon: "error",
-        //     title: "Oops...",
-        //     text: { errorMessage }
-        //   });
-        // alert.show("Oh look, an alert!");
-        // ...
-      });
-    }
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log(errorCode, errorMessage)
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: errorCode 
+          });
+      })
+  }
     render(){
       console.log(this.state)
       // const Swal = require("sweetalert2");
