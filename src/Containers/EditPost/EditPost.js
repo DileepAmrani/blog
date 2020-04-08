@@ -57,7 +57,7 @@ class EditPost extends React.Component {
     // }
   };
   render() {
-    console.log(this.state.postData);
+    // console.log(this.state.postData);
     return (
       <React.Fragment >
         <Navbar />

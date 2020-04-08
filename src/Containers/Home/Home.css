@@ -1,9 +1,13 @@
-body{
-    background-color: #b4d6d3;
+@import "https://fonts.googleapis.com/css?family=Gotu&display=swap";
+@import  "https://fonts.googleapis.com/css?family=Girassol&display=swap";
+
+@import "https://fonts.googleapis.com/css?family=Nunito+Sans&display=swap";
+body {
+  background-color: #a5cac3;
 }
-.creat-post-heading{
-     font-weight: bold;
-    font-size: large;
+.creat-post-heading {
+  font-weight: bold;
+  font-size: large;
 }
 
 .spinner {
@@ -19,7 +23,7 @@ body{
   border-right-color: transparent;
   border-style: solid;
   border-width: 2px;
-  border-radius: 50%;  
+  border-radius: 50%;
   box-sizing: border-box;
   display: inline-block;
   vertical-align: middle;
@@ -27,10 +31,13 @@ body{
 
 /* Animation styles */
 @keyframes spinner {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-
 
 /* Optional — create your own variations! */
 .spinner-large {
@@ -42,45 +49,57 @@ body{
 .spinner-slow {
   animation: spinner 1s linear infinite;
 }
-  
 
-#standard-multiline-flexible{
-    max-width: 500px;
-    width: 100%;
+#standard-multiline-flexible {
+  max-width: 500px;
+  width: 100%;
 }
-.textArea{
-    width: 100%;
-    min-width: 300px;
+.textArea {
+  width: 100%;
+  min-width: 300px;
   min-height: 80px;
   margin: 10px 0;
-  border: 2px solid #e0dcdc
+  border: 2px solid #e0dcdc;
 }
 
-.paper{
-    padding: 4%;
-    margin:  1px 0;
-    background-color: #f8f8ef !important;
+.paper {
+  padding: 4%;
+  margin: 1px 0;
+  background-color: #ffffff !important;
+  border: 1px solid rgb(143, 184, 180);
 }
-.title{
-    font-weight: bold;
-    font-size: xx-large;
-    color: lightseagreen;
+.title {
+  font-weight: bold;
+  font-size: xx-large;
+  color: lightseagreen;
+font-family: 'Nunito Sans', sans-serif;
 }
-.author{
-    /* display: block; */
-    font-weight: bold;
-    margin-left: 5px;
+.author {
+  /* display: block; */
+  font-weight: bold;
+  margin-left: 5px;
+  font-size: 14px;
+}
+.description {
+  font-family: "Gotu", sans-serif;
+  color: black;
+  text-align: justify;
 }
 
-.date{
-    font-weight: bold;
-    margin-left: 5px;
+.date {
+  font-weight: bold;
+  margin-left: 5px;
 }
 
-
-.post-image{
+.post-image {
   height: 100%;
   margin: auto;
   width: 100%;
   max-width: 700px;
+}
+
+@media only screen and (max-width: 600px) {
+  .title {
+    font-size: larger;
+  }
 }

@@ -58,7 +58,7 @@ export default class SignIn extends React.Component{
     .signInWithEmailAndPassword(email, password)
     .then((res)=> {
       // console.log("Document successfully written!", res);
-      console.log(res.user.uid)
+      // console.log(res.user.uid)
       localStorage.setItem("uid",res.user.uid)
       Swal.fire("Login Succesfull", "You may Processed", "success");
       this.props.history.push("/profile")
@@ -67,7 +67,7 @@ export default class SignIn extends React.Component{
     .catch((error)=> {
       var errorCode = error.code;
       var errorMessage = error.message;
-      console.log(errorCode, errorMessage)
+      // console.log(errorCode, errorMessage)
         Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -76,7 +76,7 @@ export default class SignIn extends React.Component{
       })
   }
     render(){
-      console.log(this.state)
+      // console.log(this.state)
       // const Swal = require("sweetalert2");
       return (
         <div >

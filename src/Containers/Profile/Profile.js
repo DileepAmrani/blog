@@ -3,7 +3,6 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import { Navbar, Footer } from "../../Components";
 import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
 import { MdTextFields, MdDelete } from "react-icons/md";
 import { FaUserTag, FaCalendarAlt, FaRegEdit } from "react-icons/fa";
 import Paper from "@material-ui/core/Paper";
@@ -34,14 +33,16 @@ class Profile extends React.Component {
       loader: false,
       createdOn: date,
       img: "",
-      fileName: ''
+      fileName: "",
+      disabledButton: false,
+      postImage: ""
     };
   }
 
   componentDidMount() {
     firebaseApp.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log("user =>>>>", user.uid);
+        // console.log("user =>>>>", user.uid);
         this.setState({
           authoruid: user.uid,
         });
@@ -53,7 +54,7 @@ class Profile extends React.Component {
 
     let { posts } = this.state;
     let uid = localStorage.getItem("uid");
-    console.log(uid);
+    // console.log(uid);
 
     firebaseApp
       .firestore()
@@ -62,37 +63,49 @@ class Profile extends React.Component {
       .get()
       .then((res) => {
         res.forEach((user) => {
-          console.log(user.data());
+          // console.log(user.data());
           let userdata = user.data();
           this.setState({
             author: userdata.firstName + " " + userdata.lastName,
           });
         });
       });
+
     firebaseApp
       .firestore()
       .collection("posts")
       .where("authoruid", "==", uid)
       .orderBy("timestamp", "desc")
       .onSnapshot((snapshot) => {
-        snapshot.forEach((doc) => {
-          let getposts = doc.data();
-          getposts.id = doc.id;
-          let changes = snapshot.docChanges();
-          console.log(changes);
-          console.log(doc.data());
-          if (changes.type === "added") {
-            console.log(changes.doc.data());
+        snapshot.docChanges().forEach((change) => {
+          // console.log(change.doc.data());
+          let getposts = change.doc.data();
+          getposts.id = change.doc.id;
+          // console.log(getposts);
+
+          if (change.type === "added") {
+            // console.log("New: ", getposts);
+            posts.push(getposts);
+            this.setState({
+              posts: posts,
+              loader: true,
+            });
           }
-          if (changes.type === "modified") {
-            console.log(changes.doc.data());
+          if (change.type === "modified") {
+            posts.push(getposts);
+            this.setState({
+              posts: posts,
+              loader: true,
+            });
           }
-          console.log(getposts);
-          posts.push(getposts);
-          this.setState({
-            posts: posts,
-            loader: true,
-          });
+          // if (change.type === "removed") {
+          //   posts.push(getposts);
+          //   this.setState({
+          //     posts: posts,
+          //     loader: true,
+          //   });
+          // }
+
         });
       });
     setTimeout(() => {
@@ -150,13 +163,16 @@ class Profile extends React.Component {
           let desertRef = firebaseApp.storage().ref(`images/${v.fileName}`);
 
           // Delete the file
-          desertRef.delete().then( ()=> {
-            // File deleted successfully
-            console.log('Deleted')
-          }).catch( (error)=> {
-            // Uh-oh, an error occurred!
-            console.log('Not Deleted')
-          });
+          desertRef
+            .delete()
+            .then(() => {
+              // File deleted successfully
+              // console.log("Deleted");
+            })
+            .catch((error) => {
+              // Uh-oh, an error occurred!
+              // console.log("Not Deleted");
+            });
 
           firebaseApp
             .firestore()
@@ -181,32 +197,32 @@ class Profile extends React.Component {
   };
 
   imageUpload = (e) => {
+    
     let fileName = e.target.files[0].name;
     this.setState({
       fileName: fileName,
+      disabledButton: true
     });
     let ref = firebaseApp.storage().ref("/").child(`images/${fileName}`);
 
     let imagePut = ref.put(e.target.files[0]);
 
-        imagePut.on("state_changed", () => {
-          ref
-            .getDownloadURL()
-            .then((url) => {
-              console.log(url);
-              this.setState({
-                postImage: url,
-              });
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+    imagePut.on("state_changed", () => {
+      ref
+        .getDownloadURL()
+        .then((url) => {
+          // console.log(url);
+          this.setState({
+            postImage: url,
+            disabledButton: false
+
+          });
+        })
+        .catch((err) => {
+          // console.log(err);
         });
+    });
   };
-
-
-
-
 
   post = () => {
     let {
@@ -217,10 +233,8 @@ class Profile extends React.Component {
       authoruid,
       createdOn,
       postImage,
-      fileName
+      fileName,
     } = this.state;
-
-
 
     if (title) {
       if (description) {
@@ -235,7 +249,7 @@ class Profile extends React.Component {
             authoruid: authoruid,
             createdOn: createdOn,
             postImageURL: postImage,
-            fileName, fileName
+            fileName: fileName
           })
           .then((res) => {
             this.props.history.push("/profile");
@@ -243,7 +257,7 @@ class Profile extends React.Component {
               title: " ",
               description: " ",
             });
-            console.log("Document successfully written!", res);
+            // console.log("Document successfully written!", res);
             Swal.fire(
               "Post Created Successfully",
               "You may Processed",
@@ -266,7 +280,7 @@ class Profile extends React.Component {
     }
   };
   render() {
-    console.log(this.state.fileName);
+    // console.log(this.state.fileName);
 
     return (
       <div className="profile">
@@ -293,7 +307,6 @@ class Profile extends React.Component {
                   type="file"
                   id="file"
                   aria-label="File browser example"
-                  value={this.state.fileName}
                   onChange={(e) => this.imageUpload(e)}
                 />
                 <span className="file-custom"></span>
@@ -324,13 +337,23 @@ class Profile extends React.Component {
                 placeholder=" Enter Description Here ....."
               ></textarea>
               <br />
-              <Button
-                variant="contained"
+              <button
                 onClick={() => this.post()}
-                style={{ backgroundColor: "#20B2AA", color: "#fff" }}
+                className='post-btn'
+                disabled={this.state.disabledButton}
               >
-                POST NOW
-              </Button>
+
+                {
+                  this.state.disabledButton ?
+                  <div class="loader"></div>
+                  :
+                  <span>
+                    POST NOW
+                  </span>
+              
+                }
+
+              </button>
             </Container>
           </div>
         </div>
@@ -357,24 +380,27 @@ class Profile extends React.Component {
                         <Grid item lg={12} sm={12}>
                           <Paper elevation={0} className="paper" key={i}>
                             <Grid container>
-                              <Grid item lg={12} sm={12}>
-                                <FaUserTag size={20} />
-                                <span className="author">{v.author}</span>
-                              </Grid>
-
-                              <Grid item lg={12} sm={12} xs={12}>
+                              <Grid item lg={12} sm={12} md={12}>
                                 <MdTextFields size={35} />
                                 <span className="title">{v.title}</span>
-                              </Grid>
 
+                              </Grid>
+                              <Grid item lg={12} sm={12}>
+                                &nbsp; &nbsp;<FaUserTag size={15} />
+                                <span className="author">{v.author}</span>
+                              </Grid>
+                              <hr />
                               <Grid item lg={12} sm={12} xs={12}>
                                 <div style={{ textAlign: "center" }}>
-                                      
-                                  <img src={v.postImageURL} className="post-image" alt={v.title}/>
+                                  <img
+                                    src={v.postImageURL}
+                                    className="post-image"
+                                    alt={v.title}
+                                  />
                                 </div>
                               </Grid>
                               <Grid item xs={12}>
-                                <p>{v.description}</p>
+                                <p className='description'> &nbsp;&nbsp;&nbsp;{v.description}</p>
                               </Grid>
                               <Grid item lg={12} sm={12} xs={12}>
                                 <hr />
@@ -383,6 +409,7 @@ class Profile extends React.Component {
                                 <span className="date">{v.createdOn}</span>
                                 <div style={{ float: "right" }}>
                                   <FaRegEdit size={20} />
+                                 
                                   <span
                                     className="edit-btn"
                                     onClick={() =>
@@ -393,7 +420,7 @@ class Profile extends React.Component {
                                   </span>
                                   <MdDelete color="red" size={20} />
                                   <span
-                                    style={{ color: "red" }}
+                                  className="delete-btn"
                                     onClick={() => this.delete(v, i)}
                                   >
                                     Delete

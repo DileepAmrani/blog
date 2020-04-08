@@ -1,6 +1,12 @@
-.creat-post-heading {
-    /* color: #4957aa; */
-}
+.post-btn{
+            background-color: #20B2AA;
+             color: #fff;
+              padding: 6px 0px ;
+              border: none;
+              border-radius: 2px;
+              width: 100px;
+              text-align: center;
+            }
 
 .heading{
     text-align: center;
@@ -8,6 +14,38 @@
     font-weight: bold;
     color: #00867d;
 }
+
 input{
  border: none;
+}
+
+.edit-btn{
+    cursor: pointer;
+}
+
+.delete-btn{
+     color: "red";
+     cursor: pointer
+}
+
+.loader {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 20px;
+  height: 20px;
+  -webkit-animation: spin 1s linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
